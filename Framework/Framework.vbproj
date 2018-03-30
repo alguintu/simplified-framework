@@ -1,0 +1,230 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2397A7A5-8F6F-4F0D-A955-C4BBDFC1C8A2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Simplified.Framework</RootNamespace>
+    <AssemblyName>Framework</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <MyType>Windows</MyType>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>Framework.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>Framework.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionExplicit>On</OptionExplicit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionCompare>Binary</OptionCompare>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionStrict>Off</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionInfer>On</OptionInfer>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DevExpress.Data.v17.2, Version=17.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Docs.v17.2, Version=17.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.RichEdit.v17.2.Core, Version=17.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Snap.v17.2, Version=17.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Utils.v17.2, Version=17.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpo.v17.2, Version=17.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraBars.v17.2, Version=17.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraEditors.v17.2, Version=17.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraGrid.v17.2, Version=17.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraLayout.v17.2, Version=17.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraNavBar.v17.2, Version=17.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraReports.v17.2, Version=17.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraRichEdit.v17.2, Version=17.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Data" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Linq" />
+    <Import Include="System.Xml.Linq" />
+    <Import Include="System.Threading.Tasks" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Classes\Composer.vb" />
+    <Compile Include="Core\Actions\ActionBase.vb" />
+    <Compile Include="Core\Actions\ButtonAction.vb" />
+    <Compile Include="Core\ModuleBase.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Core\Peek.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Core\UiManager.vb" />
+    <Compile Include="Interfaces\IModule.vb" />
+    <Compile Include="Interfaces\IUser.vb" />
+    <Compile Include="Events\DataUpdateEventArgs.vb" />
+    <Compile Include="Interfaces\IMainForm.vb" />
+    <Compile Include="Logic\Cryptography.vb" />
+    <Compile Include="Logic\DataCommon.vb" />
+    <Compile Include="Logic\StringExtensions.vb" />
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="My Project\Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Presentation\UICommon.vb" />
+    <Compile Include="Presentation\UIDXValidation.vb" />
+    <Compile Include="Presentation\UIXtraGrid.vb" />
+    <Compile Include="UI\Classes\LabelTabController.vb" />
+    <Compile Include="UI\Classes\RepoGridLookupEditResizer.vb" />
+    <Compile Include="UI\Classes\SnapZoomManager.vb" />
+    <Compile Include="UI\CustomControls\ActionToolbar.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\CustomControls\BackstageViewLabel.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\CustomControls\CenteredMessageBox\CenteredMessageBox.vb" />
+    <Compile Include="UI\CustomControls\CenteredMessageBox\DialogRectangle.vb" />
+    <Compile Include="UI\CustomControls\CenteredMessageBox\NativeMethods.vb" />
+    <Compile Include="UI\CustomControls\CustomDockManager.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\CustomControls\RepositoryItemActionToolbar.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\CustomControls\RibbonRightAlignedGroup\CustomRibbon.vb" />
+    <Compile Include="UI\CustomControls\RibbonRightAlignedGroup\CustomRibbonPageGroupViewInfo.vb" />
+    <Compile Include="UI\CustomControls\RibbonRightAlignedGroup\CustomRibbonPanelComplexLayoutCalculator.vb" />
+    <Compile Include="UI\CustomControls\RibbonRightAlignedGroup\CustomRibbonPanelViewInfo.vb" />
+    <Compile Include="UI\CustomControls\RibbonRightAlignedGroup\CustomRibbonViewInfo.vb" />
+    <Compile Include="UI\Forms\Options\OptionPage.Designer.vb">
+      <DependentUpon>OptionPage.vb</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Forms\Options\OptionPage.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\Options\Options.Designer.vb">
+      <DependentUpon>Options.vb</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Forms\Options\Options.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\ReportFilterForm.Designer.vb">
+      <DependentUpon>ReportFilterForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Forms\ReportFilterForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\Security\Login.designer.vb">
+      <DependentUpon>Login.vb</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Forms\Security\Login.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\Security\UpdatePassword.designer.vb">
+      <DependentUpon>UpdatePassword.vb</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Forms\Security\UpdatePassword.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\WaitForm.designer.vb">
+      <DependentUpon>WaitForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Forms\WaitForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Modules\UICommon.vb" />
+    <Compile Include="UI\Modules\UIDXValidation.vb" />
+    <Compile Include="UI\Modules\UIXtraGrid.vb" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\CustomControls\ActionToolbar.resx">
+      <DependentUpon>ActionToolbar.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Forms\Options\OptionPage.resx">
+      <DependentUpon>OptionPage.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Forms\Options\Options.resx">
+      <DependentUpon>Options.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Forms\ReportFilterForm.resx">
+      <DependentUpon>ReportFilterForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Forms\Security\Login.resx">
+      <DependentUpon>Login.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Forms\Security\UpdatePassword.resx">
+      <DependentUpon>UpdatePassword.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Forms\WaitForm.resx">
+      <DependentUpon>WaitForm.vb</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <CustomToolNamespace>My</CustomToolNamespace>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="UI\Resources\Add_32x32.png" />
+    <Content Include="UI\Resources\Apply_32x32.png" />
+    <Content Include="UI\Resources\Cancel_32x32.png" />
+    <Content Include="UI\Resources\Edit_32x32.png" />
+    <Content Include="UI\Resources\Reset_32x32.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+</Project>
