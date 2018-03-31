@@ -1,3 +1,5 @@
-﻿Public Interface IRoom
+﻿Namespace Interfaces
+    Public Interface IRoom
 
-End Interface
+    End Interface
+End Namespace

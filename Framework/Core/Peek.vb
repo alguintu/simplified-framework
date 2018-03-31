@@ -16,19 +16,24 @@ Namespace Core
             End Get
         End Property
         Public Property Group As NavBarGroup
-        Public Property Owner As ModuleBase
+        Public Property Owner As ModuleGroup
 
-        Public Sub New(caption As String, owner As ModuleBase, Optional smallImages As ImageCollection = Nothing)
+        Public Sub New(caption As String, owner As ModuleGroup, modules As Dictionary(Of String, Object), Optional smallImages As ImageCollection = Nothing)
             DoubleBuffered = True
             Me.Owner = owner
-            Me.Padding = New Windows.Forms.Padding(5)
+            Padding = New Windows.Forms.Padding(5)
             SuspendLayout()
             SetupNavBar(caption, smallImages)
+            For Each i In modules
+                Add(i.Key, i.Value)
+            Next
+            NavBar.SelectedLink = NavBar.Items.First.Links.First
+            SetHandler(owner.PeekHandler)
             ResumeLayout()
         End Sub
 
         Private Sub SetupNavBar(caption As String, Optional smallImages As ImageCollection = Nothing)
-            N = New NavBarControl
+            N = New NavBarControl With {.LinkSelectionMode = LinkSelectionModeType.OneInControl, .SelectLinkOnPress = True}
             Group = New NavBarGroup
             N.Tag = Me
             With NavBar
@@ -51,17 +56,17 @@ Namespace Core
                 .GroupStyle = NavBarGroupStyle.SmallIconsText
             End With
             Controls.Add(NavBar)
-            SetHandler()
         End Sub
 
         Public Sub Add(caption As String, view As Object, Optional imageIndex As Integer = Nothing)
-            Group.ItemLinks.Add(New NavBarItem(caption) With {.Tag = view, .SmallImageIndex = imageIndex})
+            Dim link As New NavBarItem(caption) With {.Tag = view, .SmallImageIndex = imageIndex}
+            Group.ItemLinks.Add(link)
             FitHeight()
         End Sub
 
-        Public Sub SetHandler()
-            RemoveHandler NavBar.LinkClicked, UiManager.Instance.SubModuleSwitcher
-            AddHandler NavBar.LinkClicked, UiManager.Instance.SubModuleSwitcher
+        Public Sub SetHandler(handler As NavBarLinkEventHandler)
+            RemoveHandler NavBar.LinkClicked, handler
+            AddHandler NavBar.LinkClicked, handler
         End Sub
 
         Public Sub FitHeight()
@@ -72,8 +77,6 @@ Namespace Core
             Height = (infoGroup.LastLinkBounds.Height * 1.5) + (infoGroup.Links.Count * infoGroup.LastLinkBounds.Height) + (Padding.All * 2)
             ResumeLayout()
         End Sub
-
     End Class
-
 End Namespace
 

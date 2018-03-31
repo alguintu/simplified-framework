@@ -1,14 +1,11 @@
 ﻿Imports System.Windows.Forms
 Imports DevExpress.XtraBars.Navigation
 Imports DevExpress.XtraBars.Ribbon
-Imports DevExpress.XtraNavBar
 Imports DevExpress.XtraSplashScreen
-Imports DevExpress.XtraWaitForm
 Imports Simplified.Framework.Interfaces
 Imports Simplified.Framework.Logic
 
 Namespace Core
-
     Public NotInheritable Class UiManager
         Private WithEvents M As RibbonForm
         Private WithEvents R As RibbonControl
@@ -21,7 +18,6 @@ Namespace Core
                 Return _instance.Value
             End Get
         End Property
-
         Public ReadOnly Property MainForm As RibbonForm
             Get
                 Return M
@@ -48,6 +44,7 @@ Namespace Core
             End Get
         End Property
         Public ReadOnly Property CurrentView As ModuleBase
+        Private PeekList As Dictionary(Of String, Peek)
 
         Public Sub LockView(lock As Boolean)
             Ribbon.Enabled = Not lock
@@ -58,101 +55,97 @@ Namespace Core
             R = ribbon
             N = navBar
             F = navFrame
+            PeekList = New Dictionary(Of String, Peek)
         End Sub
 
         Public Sub AddModule(name As String, view As Object)
             If view IsNot Nothing Then
-                NavBar.Items.Add(New NavigationBarItem() With {.Text = name, .Tag = view})
+                Dim item = New NavigationBarItem() With {.Text = name, .Tag = view}
+                NavBar.Items.Add(item)
+                If view.GetType.Equals(GetType(ModuleGroup)) Then
+                    PeekList.Add(name, view.Peek)
+                    view.NavItem = item
+                End If
             End If
         End Sub
 
         Private Sub NavigationBar_SelectedItemChanging(sender As Object, e As SelectedItemChangingEventArgs) Handles N.SelectedItemChanging
             If e.Item.Tag Is Nothing Then
                 e.Cancel = True
-            ElseIf Not e.Item.Tag.isValueCreated() Then
-                SplashScreenManager.ShowForm(GetType(WaitForm), True, True)
+            Else
+                SplashScreenManager.ShowForm(MainForm, GetType(WaitForm), True, True, False)
                 SplashScreenManager.Default.SetWaitFormCaption((e.Item.Text).ToString.SeparateCamelCase())
-                Dim iModule = CType(e.Item.Tag.Value(), ModuleBase)
-                Dim page = New NavigationPage() With {.Tag = iModule}
-                page.Controls.Add(iModule)
-                Frame.Pages.Add(page)
-                e.Item.Tag = page
+                If e.Item.Tag.GetType.Equals(GetType(ModuleGroup)) Then
+                    Dim group = DirectCast(e.Item.Tag, ModuleGroup)
+                    e.Item.Tag = SetupPage(group.CurrentView, group)
+                ElseIf Not e.Item.Tag.GetType.Equals(GetType(NavigationPage)) AndAlso Not e.Item.Tag.isValueCreated() Then
+                    Dim iModule = CType(e.Item.Tag.Value(), ModuleBase)
+                    e.Item.Tag = SetupPage(iModule, iModule)
+                End If
                 SplashScreenManager.CloseForm(False)
             End If
         End Sub
 
         Private Sub NavigationBar_SelectedItemChanged(sender As Object, e As NavigationBarItemEventArgs) Handles N.SelectedItemChanged
-            If e.Item.Tag.Tag.GetType.IsSubclassOf(GetType(ModuleBase)) Then
-                MainForm.SuspendLayout()
-                If e.Item.Tag.Tag.HasRibbon Then Ribbon.MergeRibbon(e.Item.Tag.Tag.Ribbon)
-                If CurrentView IsNot Nothing Then If CurrentView.HasStatusBar Then Ribbon.StatusBar.UnMergeStatusBar()
-                If e.Item.Tag.Tag.HasStatusBar Then Status.MergeStatusBar(e.Item.Tag.Tag.StatusBar)
-                _CurrentView = e.Item.Tag.Tag
-                e.Item.Tag.Tag.Dock = DockStyle.Fill
-                Frame.SelectedPage = e.Item.Tag
-                MainForm.ResumeLayout()
-                _CurrentView.Focus()
+            Dim nextView As ModuleBase = Nothing
+            If e.Item.Tag.Tag.GetType.Equals(GetType(ModuleGroup)) Then
+                nextView = e.Item.Tag.Tag.CurrentView
+            ElseIf e.Item.Tag.Tag.GetType.IsSubclassOf(GetType(ModuleBase)) Then
+                nextView = e.Item.Tag.Tag
             End If
+            If nextView Is Nothing Then Return
+            SwitchView(nextView, e.Item.Tag)
         End Sub
 
-
-
-        Private Sub ShowPeek(ByVal sender As Object, ByVal e As QueryPeekFormContentEventArgs) Handles N.QueryPeekFormContent
-            If e.Item.Tag Is Nothing Then Return
-            If e.Item.Tag.GetType.Equals(GetType(NavigationPage)) AndAlso e.Item.Tag.Tag IsNot Nothing AndAlso e.Item.Tag.Tag.Peek IsNot Nothing Then
-                e.Control = e.Item.Tag.Tag.Peek
-            End If
-        End Sub
-
-        Public ReadOnly Property SubModuleSwitcher As NavBarLinkEventHandler
-            Get
-                Return AddressOf PeekLinkClicked
-            End Get
-        End Property
-
-        Private Function Instantiate(ByVal t As Type) As Object
-            Return t.GetConstructor(New Type() {}).Invoke(New Object() {})
+        Public Function SetupPage(v As ModuleBase, tag As Object) As NavigationPage
+            Dim page = New NavigationPage() With {.Tag = tag}
+            Frame.Pages.Add(page)
+            Return page
         End Function
 
-        Private Function IsTypeOfType(type As Type) As Boolean
-            Return GetType(Type).IsAssignableFrom(type)
-        End Function
-
-        Public Sub PeekLinkClicked(sender As Object, e As NavBarLinkEventArgs)
-            If e.Link.Item.Tag Is Nothing Then Return
-            e.Link.Item.Tag = SwitchSubModule(e.Link.Item.Tag, CType(sender.Tag, Peek).Owner)
+        Public Sub SwitchView(nextView As ModuleBase, page As NavigationPage)
+            MainForm.SuspendLayout()
+            MergeRibbons(nextView)
+            page.Controls.Clear()
+            page.Controls.Add(nextView)
+            Frame.SelectedPage = page
+            _CurrentView = nextView
+            CurrentView.Dock = DockStyle.Fill
+            CurrentView.Show()
+            CurrentView.Focus()
+            MainForm.ResumeLayout()
             N.HidePeekForm()
         End Sub
 
-        Private Function SwitchSubModule(v As Object, owner As ModuleBase) As ModuleBase
-            SplashScreenManager.ShowForm(GetType(WaitForm), True, True)
-            MainForm.SuspendLayout()
+        Public Sub SwitchView(item As NavigationBarItem)
+            NavBar.SelectedItem = item
+        End Sub
 
-            Dim view As ModuleBase = If(IsTypeOfType(v.GetType), Instantiate(v), v)
-            If CurrentView IsNot view Then
-                If view.HasRibbon Then Ribbon.MergeRibbon(view.Ribbon)
-                If CurrentView IsNot Nothing Then If CurrentView.HasStatusBar Then Ribbon.StatusBar.UnMergeStatusBar()
-                If view.HasStatusBar Then Status.MergeStatusBar(view.Status)
-                Dim item As NavigationBarItem = NavBar.Items.ToList.Find(Function(i) i.Tag.Tag.Equals(owner))
-                Dim page As NavigationPage = item.Tag
-                If Not page.Controls.Contains(view) Then page.Controls.Add(view)
-                view.Dock = DockStyle.Fill
-                CurrentView.Hide()
-                _CurrentView = view
-                view.Show()
-                If Not Frame.SelectedPage.Equals(page) Then Frame.SelectedPage = page
-            End If
+        Private Sub MergeRibbons(nextView As ModuleBase)
+            Ribbon.UnMergeRibbon()
+            If nextView.HasRibbon Then Ribbon.MergeRibbon(nextView.Ribbon)
+            If CurrentView IsNot Nothing Then If CurrentView.HasStatusBar Then Ribbon.StatusBar.UnMergeStatusBar()
+            If nextView.HasStatusBar Then Status.MergeStatusBar(nextView.Status)
+        End Sub
 
-            MainForm.ResumeLayout()
-            SplashScreenManager.CloseForm(False)
+        Private Sub ShowPeek(ByVal sender As Object, ByVal e As QueryPeekFormContentEventArgs) Handles N.QueryPeekFormContent
+            Try
+                Dim peek = PeekList.Item(e.Item.Text)
+                e.Control = peek
+            Catch ex As Exception
+            End Try
+        End Sub
 
-            Return view
+        Public Shared Function Instantiate(ByVal t As Type) As Object
+            Return t.GetConstructor(New Type() {}).Invoke(New Object() {})
         End Function
 
+        Public Shared Function IsTypeOfType(type As Type) As Boolean
+            Return GetType(Type).IsAssignableFrom(type)
+        End Function
 
         Public Sub ShowFirstView()
             If NavBar.Items.Count > 0 Then NavBar.SelectedItem = NavBar.Items.First()
         End Sub
-
     End Class
 End Namespace

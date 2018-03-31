@@ -1,5 +1,4 @@
-﻿Imports System.ComponentModel
-Imports DevExpress.XtraBars.Ribbon
+﻿Imports DevExpress.XtraBars.Ribbon
 Imports DevExpress.XtraEditors
 Imports Simplified.Framework.Core.Actions
 Imports Simplified.Framework.Events
@@ -14,7 +13,6 @@ Namespace Core
         Public Shared Event DataUpdate(sender As Object, e As DataUpdateEventArgs)
         Public Shared Event PermissionsUpdate(sender As Object, e As EventArgs)
 
-        Public Property Peek As Peek Implements IModule.Peek
         Public Property ModuleName As String
         Public Property Ribbon As RibbonControl
         Public ReadOnly Property HasRibbon As Boolean
@@ -34,7 +32,6 @@ Namespace Core
             End Get
         End Property
         Protected Actions As List(Of ActionBase)
-
         Public Sub New()
             DoubleBuffered = True
             Actions = New List(Of ActionBase)
@@ -44,13 +41,6 @@ Namespace Core
             If MainForm IsNot Nothing Then Controls.SetMenuManager(MainForm.Ribbon)
             If HasRibbon Then Ribbon.Visible = False
             RaiseEvent PermissionsUpdate(Nothing, New EventArgs)
-        End Sub
-
-        Protected Sub AddSubmodule(name As String, view As IModule)
-            If view IsNot Nothing Then
-                If Peek Is Nothing Then Peek = New Peek(ModuleName, Me)
-                Peek.Add(name, view)
-            End If
         End Sub
 
         Protected Sub RaiseDataUpdate(businessObject As Type)
@@ -65,6 +55,14 @@ Namespace Core
 
         Public Sub HandlePermissionUpdate(sender As Object, e As EventArgs) Implements IModule.HandlePermissionUpdate
             Throw New NotImplementedException()
+        End Sub
+
+        Private Sub InitializeComponent()
+            SuspendLayout()
+            Name = "ModuleBase"
+            Padding = New System.Windows.Forms.Padding(10)
+            Size = New System.Drawing.Size(910, 523)
+            ResumeLayout(False)
         End Sub
     End Class
 End Namespace
